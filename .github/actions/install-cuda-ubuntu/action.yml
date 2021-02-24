@@ -16,7 +16,8 @@ runs:
       shell: bash
 
     # Specify the correct host compilers
-    - name: Install/Select gcc and g++ 
+    - name: Install/Select gcc and g++
+      shell: bash
       run: |
         sudo apt-get install -y gcc-${{ env.GCC }} g++-${{ env.GCC }}
         echo "CC=/usr/bin/gcc-${{ env.GCC }}" >> $GITHUB_ENV
