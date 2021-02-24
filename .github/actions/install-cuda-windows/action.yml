@@ -1,7 +1,7 @@
 # Windows builds.
 name: Windows
 runs:
-    using: windows2019
+    using: composite
     steps:
     - name: Install CUDA
       shell: powershell

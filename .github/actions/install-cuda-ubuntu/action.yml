@@ -1,7 +1,7 @@
 # Compile project on Ubuntu
 name: Run Cuda install Ubuntu
 runs:
-    using: ubuntu-18.04
+    using: composite
     steps:
     - name: Install CUDA
       run: |
