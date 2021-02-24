@@ -88,7 +88,7 @@ fi
 ## -------------------------------
 ## Select CUDA packages to install
 ## -------------------------------
-CUDA_PACKAGES=""
+CUDA_PACKAGES="cuda"
 for package in "${CUDA_PACKAGES_IN[@]}"
 do : 
     # @todo This is not perfect. Should probably provide a separate list for diff versions
@@ -146,4 +146,13 @@ export CUDA_PATH=${CUDA_PATH}
 export PATH="$CUDA_PATH/bin:$PATH"
 export LD_LIBRARY_PATH="$CUDA_PATH/lib:$LD_LIBRARY_PATH"
 nvcc -V
+if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.2"* ]]; then
+ wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.1.0/cudnn-11.2-linux-x64-v8.1.0.77.tgz
+fi
+
+if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.0"* ]]; then
+ wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.4/cudnn-11.0-linux-x64-v8.0.4.30.tgz
+fi
+
+sudo tar -hxvf cudnn.tgz -C /usr/local/
 
