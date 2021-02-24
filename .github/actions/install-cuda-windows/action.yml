@@ -8,7 +8,8 @@ runs:
       shell: powershell
       run: |
         # Install CUDA via a powershell script
-        .\.github\actions\install-cuda\windows\install_cuda_windows.ps1
+        Invoke-WebRequest https://raw.githubusercontent.com/KonduitAI/cuda-install/master/.github/actions/install-cuda-windows/install_cuda_windows.ps1 -OutFile install_cuda_windows.ps1 | Out-Null
+        install_cuda_windows.ps1
         if ($?) {
           # Set paths for subsequent steps, using $env:CUDA_PATH
           echo "Adding CUDA to CUDA_PATH, CUDA_PATH_X_Y and PATH"
