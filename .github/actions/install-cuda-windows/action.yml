@@ -1,7 +1,7 @@
 # Windows builds.
 name: Windows
 runs:
-    using: composite
+    using: windows2019
     steps:
     - name: Install CUDA
       shell: powershell
@@ -19,6 +19,6 @@ runs:
             ls $env:CUDA_PATH\include
 
     - name: cmake version
-      shell: bash
+      shell: powershell
       run: cmake --version
 
