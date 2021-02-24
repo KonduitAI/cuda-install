@@ -9,14 +9,8 @@ runs:
       run: |
         # Install CUDA via a powershell script
         Invoke-WebRequest https://raw.githubusercontent.com/KonduitAI/cuda-install/master/.github/actions/install-cuda-windows/install_cuda_windows.ps1 -OutFile install_cuda_windows.ps1 | Out-Null
-        install_cuda_windows.ps1
-        if ($?) {
-          # Set paths for subsequent steps, using $env:CUDA_PATH
-          echo "Adding CUDA to CUDA_PATH, CUDA_PATH_X_Y and PATH"
-          echo "CUDA_PATH=$env:CUDA_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "$env:CUDA_PATH_VX_Y=$env:CUDA_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "$env:CUDA_PATH/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        }
+        .\install_cuda_windows.ps1
+
 
     - name: nvcc check
       shell: powershell
