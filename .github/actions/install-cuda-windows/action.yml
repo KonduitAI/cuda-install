@@ -5,20 +5,17 @@ runs:
     steps:
     - name: Install CUDA
       shell: powershell
-      run: |
-            # Install CUDA via a powershell script
+      run:  |
             Invoke-WebRequest https://raw.githubusercontent.com/KonduitAI/cuda-install/master/.github/actions/install-cuda-windows/install_cuda_windows.ps1 -OutFile install_cuda_windows.ps1 | Out-Null
             .\install_cuda_windows.ps1
 
     - name: nvcc check
       shell: powershell
-      run: |
+      run:  |
             nvcc -V
             ls $env:CUDA_PATH
             ls $env:CUDA_PATH\bin
             ls $env:CUDA_PATH\include
 
-    - name: cmake version
-      shell: powershell
-      run: cmake --version
+
 
