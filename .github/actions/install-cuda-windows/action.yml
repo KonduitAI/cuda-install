@@ -6,12 +6,12 @@ on:
     paths:
       - "**"
       - "!.github/**"
-      - ".github/workflows/Windows.yml"
+      - ".github/workflows/action.yml"
   # pull_request:
   #   paths:
   #     - "**"
   #     - "!.github"
-  #     - ".github/workflows/Windows.yml"
+  #     - ".github/workflows/action.yml"
 
 jobs:
   build:
@@ -81,27 +81,3 @@ jobs:
       shell: bash
       run: cmake --version
 
-    - name: Configure CMake
-      id: configure
-      shell: bash
-      run: cmake . -B ${{ env.build_dir }} -G "${{ matrix.visual_studio }}" -A x64 
-
-    - name: Configure Error Processing
-      if: ${{ (failure() && steps.configure.outcome == 'failure') || success() }}
-      working-directory: ${{ env.build_dir }}
-      shell: bash
-      run: |
-          if [[ -f "CMakeFiles/CMakeOutput.log" ]]; then
-            echo "---- CMakeFiles/CMakeOutput.log"
-            cat CMakeFiles/CMakeOutput.log
-            echo "----"
-          fi
-          if [[ -f "CMakeFiles/CMakeError.log" ]]; then
-            echo "---- CMakeFiles/CMakeError.log"
-            cat CMakeFiles/CMakeError.log
-            echo "----"
-          fi
-
-    - name: Build
-      working-directory: ${{ env.build_dir }}
-      run: cmake --build . --config ${{ env.config }} --target ALL_BUILD --verbose
