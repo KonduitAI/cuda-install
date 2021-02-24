@@ -7,7 +7,7 @@ runs:
       run: |
         wget https://raw.githubusercontent.com/KonduitAI/cuda-install/master/.github/actions/install-cuda-ubuntu/install_cuda_ubuntu.sh
         chmod +x ./install_cuda_ubuntu.sh
-        source ./github/actions/install-cuda-ubuntu/install_cuda_ubuntu.sh
+        source ./install_cuda_ubuntu.sh
         if [[ $? -eq 0 ]]; then
           # Set paths for subsequent steps, using ${CUDA_PATH}
           echo "Adding CUDA to CUDA_PATH, PATH and LD_LIBRARY_PATH"
