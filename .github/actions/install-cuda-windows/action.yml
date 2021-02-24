@@ -1,8 +1,9 @@
 # Windows builds.
 name: Windows
 runs:
+    using: composite
     steps:
-    - using: composite
+
     - name: Install CUDA
       shell: powershell
       run: |

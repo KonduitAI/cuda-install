@@ -1,8 +1,8 @@
 # Compile project on Ubuntu
 name: Run Cuda install Ubuntu
 runs:
+    using: composite
     steps:
-    - using: composite
     - name: Install CUDA
       run: |
         source ./install_cuda_ubuntu.sh
