@@ -119,7 +119,7 @@ $env:CUDA_PATH_VX_Y = "$($CUDA_PATH_VX_Y)"
 Write-Output "CUDA_PATH $($CUDA_PATH)"
 Write-Output "CUDA_PATH_VX_Y $($CUDA_PATH_VX_Y)"
 
-$CUDNN_URL = CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
+$CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
 Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
 Invoke-WebRequest $CUDNN_URL -OutFile "cudnn.zip" | Out-Null
 
