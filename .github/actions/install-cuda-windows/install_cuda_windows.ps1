@@ -138,9 +138,11 @@ Unzip "cudnn.zip" "cudnn"
 
 $Source = 'cudnn'
 $Files = '*'
-Get-ChildItem $Source -Filter $Files -Recurse | ForEach{
+Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
     $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
-    If(!(Test-Path $Path)){New-Item -ItemType Directory -Path $Path -Force | Out-Null
+    If(!(Test-Path $Path)) {
+        New-Item -ItemType Directory -Path $Path -Force | Out-Null
+    }
     Copy-Item $_.FullName -Destination $Path -Force
 }
 
