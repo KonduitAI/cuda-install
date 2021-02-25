@@ -15,12 +15,6 @@ $CUDNN_KNOWN_URLS = @{
       "11.2.1_461" = "https://developer.download.nvidia.com/compute/redist/cudnn/v8.1.0/cudnn-11.2-windows-x64-v8.1.0.77.zip";
 }
 
-# @todo - change this to be based on _MSC_VER intead, or invert it to be CUDA keyed instead?
-$VISUAL_STUDIO_MIN_CUDA = @{
-    "2019" = "11.2";
-    "2019" = "11.0"; # Depends on which version of 2017! 9.0 to 10.0 depending on  version
-}
-
 # cuda_runtime.h is in nvcc <= 10.2, but cudart >= 11.0
 # @todo - make this easier to vary per CUDA version.
 $CUDA_PACKAGES_IN = @(
