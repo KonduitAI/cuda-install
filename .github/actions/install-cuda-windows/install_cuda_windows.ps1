@@ -24,11 +24,11 @@ $VISUAL_STUDIO_MIN_CUDA = @{
 # cuda_runtime.h is in nvcc <= 10.2, but cudart >= 11.0
 # @todo - make this easier to vary per CUDA version.
 $CUDA_PACKAGES_IN = @(
-    "nvcc";
-    "visual_studio_integration";
-    "curand_dev";
-    "nvrtc_dev";
-    "cudart";
+    "nvcc",
+    "visual_studio_integration",
+    "curand_dev",
+    "nvrtc_dev",
+    "cudart"
 )
 
 
