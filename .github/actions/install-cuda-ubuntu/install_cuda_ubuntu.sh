@@ -50,9 +50,9 @@ CUDA_VERSION_MAJOR_MINOR=${cuda}
 
 # Split the version.
 # We (might/probably) don't know PATCH at this point - it depends which version gets installed.
-CUDA_MAJOR=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f1)
-CUDA_MINOR=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f2)
-CUDA_PATCH=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f3)
+export CUDA_MAJOR=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f1)
+export CUDA_MINOR=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f2)
+export CUDA_PATCH=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f3)
 # use lsb_release to find the OS.
 UBUNTU_VERSION=$(lsb_release -sr)
 UBUNTU_VERSION="${UBUNTU_VERSION//.}"
@@ -137,9 +137,8 @@ fi
 ## Set environment vars / vars to be propagated
 ## -----------------
 
-CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
-echo "CUDA_PATH=${CUDA_PATH}"
-export CUDA_PATH=${CUDA_PATH}
+export CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
+echo "CUDA_PATH=$CUDA_PATH"
 
 
 # Quick test. @temp
