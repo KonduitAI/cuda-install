@@ -121,7 +121,7 @@ Write-Output "CUDA_PATH_VX_Y $($CUDA_PATH_VX_Y)"
 
 $CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
 Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
-Invoke-WebRequest $CUDNN_URL -OutFile "cudnn.zip" | Out-Null
+Invoke-WebRequest $($CUDNN_URL) -OutFile "cudnn.zip" | Out-Null
 
 # See: https://stackoverflow.com/questions/27768303/how-to-unzip-a-file-in-powershell
 Add-Type -AssemblyName System.IO.Compression.FileSystem
