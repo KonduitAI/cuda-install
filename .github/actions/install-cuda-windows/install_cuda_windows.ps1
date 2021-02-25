@@ -132,7 +132,7 @@ function Unzip
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
 }
 
-Unzip "cudnn.zip" "cudnn"
+Unzip "cudnn.zip" $CUDA_PATH
 
 
 
