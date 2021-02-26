@@ -102,7 +102,7 @@ if(Test-Path -Path $CUDA_REPO_PKG_LOCAL){
 
 # Invoke silent install of CUDA (via network installer)
 Write-Output "Installing CUDA $($CUDA_VERSION_FULL). Subpackages $($CUDA_PACKAGES)"
-Start-Process -Wait -FilePath .\"$($CUDA_REPO_PKG_LOCAL)" -ArgumentList "-s $($CUDA_PACKAGES)"
+Start-Process -Wait -FilePath .\"$($CUDA_REPO_PKG_LOCAL)" -ArgumentList "-s"
 
 # Check the return status of the CUDA installer.
 if (!$?) {
@@ -145,6 +145,10 @@ Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
     }
     Copy-Item $_.FullName -Destination $Path -Force
 }
+
+
+echo "CUDA_PATH=$($CUDA_PATH))" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+echo "CUDA PATH: $CUDA_PATH"
 
 # PATH needs updating elsewhere, anything in here won't persist.
 # Append $CUDA_PATH/bin to path.
