@@ -10,7 +10,7 @@ $CUDA_KNOWN_URLS = @{
 
 $CUDA_FILE_NAMES = @{
     "11.0.167" = "cuda_11.0.1_win10_network.exe";
-    "11.2.1_461" = "cuda_11.2.1_461.09_win10_network.exe";
+    "11.2.1" = "cuda_11.2.1_461.09_win10_network.exe";
 }
 
 # https://developer.nvidia.com/compute/machine-learning/cudnn/secure/8.0.4/11.0_20200923/cudnn-11.0-windows-x64-v8.0.4.30.zip
