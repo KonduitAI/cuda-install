@@ -89,8 +89,11 @@ if($CUDA_KNOWN_URLS.containsKey($CUDA_VERSION_FULL)){
     $CUDA_REPO_PKG_REMOTE="http://developer.download.nvidia.com/compute/cuda/$($CUDA_MAJOR).$($CUDA_MINOR).$($CUDA_PATCH)/network_installers/cuda_$($CUDA_VERSION_FULL)_win10_network.exe"
 }
 
-$CUDA_REPO_PKG_LOCAL=$CUDA_FILE_NAMES[$CUDA_VERSION_FULL]
 
+
+$CUDA_REPO_PKG_LOCAL=$CUDA_FILE_NAMES[$CUDA_VERSION_FULL]
+Write-Output "After downloading, attempting to use file name ${$CUDA_REPO_PKG_LOCAL}, files in directory are:"
+Get-ChildItem
 
 ## ------------
 ## Install CUDA
