@@ -8,6 +8,11 @@ $CUDA_KNOWN_URLS = @{
       "11.2.1_461" = "https://developer.download.nvidia.com/compute/cuda/11.2.1/local_installers/cuda_11.2.1_461.09_win10_network.exe";
 }
 
+$CUDA_FILE_NAMES = @{
+    "11.0.167" = "cuda_11.0.1_win10_network.exe";
+    "11.2.1_461" = "cuda_11.2.1_461.09_win10_network.exe";
+}
+
 # https://developer.nvidia.com/compute/machine-learning/cudnn/secure/8.0.4/11.0_20200923/cudnn-11.0-windows-x64-v8.0.4.30.zip
 
 $CUDNN_KNOWN_URLS = @{
@@ -83,7 +88,8 @@ if($CUDA_KNOWN_URLS.containsKey($CUDA_VERSION_FULL)){
     Write-Output "note: URL for CUDA ${$CUDA_VERSION_FULL} not known, estimating."
     $CUDA_REPO_PKG_REMOTE="http://developer.download.nvidia.com/compute/cuda/$($CUDA_MAJOR).$($CUDA_MINOR).$($CUDA_PATCH)/network_installers/cuda_$($CUDA_VERSION_FULL)_win10_network.exe"
 }
-$CUDA_REPO_PKG_LOCAL="cuda_$($CUDA_VERSION_FULL)_win10_network.exe"
+
+$CUDA_REPO_PKG_LOCAL=$CUDA_FILE_NAMES[$CUDA_VERSION_FULL]
 
 
 ## ------------
