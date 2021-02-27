@@ -110,7 +110,7 @@ if(Test-Path -Path $CUDA_REPO_PKG_LOCAL){
 }
 
 # Invoke silent install of CUDA (via network installer)
-Write-Output "Installing CUDA $($CUDA_VERSION_FULL). Subpackages $($CUDA_PACKAGES)"
+Write-Output "Installing CUDA $($CUDA_VERSION_FULL). Subpackages $($CUDA_PACKAGES) using file $($CUDA_REPO_PKG_LOCAL)"
 Start-Process -Wait -FilePath .\"$($CUDA_REPO_PKG_LOCAL)" -ArgumentList "-s"
 
 # Check the return status of the CUDA installer.
@@ -127,11 +127,11 @@ $env:CUDA_PATH = "$($CUDA_PATH)"
 $env:CUDA_PATH_VX_Y = "$($CUDA_PATH_VX_Y)"
 Write-Output "CUDA_PATH $($CUDA_PATH)"
 Write-Output "CUDA_PATH_VX_Y $($CUDA_PATH_VX_Y)"
+Get-ChildItem $CUDA_PATH
 
 $CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
 Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
 Invoke-WebRequest $($CUDNN_URL) -OutFile "cudnn.zip" | Out-Null
-
 # See: https://stackoverflow.com/questions/27768303/how-to-unzip-a-file-in-powershell
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Unzip
