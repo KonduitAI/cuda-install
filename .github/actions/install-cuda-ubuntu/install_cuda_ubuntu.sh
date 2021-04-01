@@ -124,7 +124,10 @@ wget ${PIN_URL}
 sudo mv ${PIN_FILENAME} /etc/apt/preferences.d/cuda-repository-pin-600
 sudo apt-key adv --fetch-keys ${APT_KEY_URL}
 sudo add-apt-repository "deb ${REPO_URL} /"
+sudo apt autoremove && sudo apt autoclean
 sudo apt-get update
+sudo apt autoremove && sudo apt autoclean
+
 
 echo "Installing CUDA packages ${CUDA_PACKAGES}"
 sudo apt-get -y install ${CUDA_PACKAGES}
