@@ -20,6 +20,7 @@ runs:
         echo "${CUDA_PATH}/bin" >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=${CUDA_PATH}/lib:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
         echo "Added Cuda path ${CUDA_PATH} LD Lib Path ${LD_LIBRARY_PATH}"
+      
 
       shell: bash
 
@@ -31,4 +32,6 @@ runs:
         echo "CC=/usr/bin/gcc-${{ env.GCC }}" >> $GITHUB_ENV
         echo "CXX=/usr/bin/g++-${{ env.GCC }}" >> $GITHUB_ENV
         echo "CUDAHOSTCXX=/usr/bin/g++-${{ env.GCC }}" >> $GITHUB_ENV
+        sudo apt-get clean
+        sudo apt-get autoclean
 
