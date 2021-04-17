@@ -132,10 +132,10 @@ sudo apt autoremove && sudo apt autoclean
 echo "Installing CUDA packages ${CUDA_PACKAGES}"
 sudo apt-get -y -f install ${CUDA_PACKAGES}
 
-if [[ $? -ne 0 ]]; then
-    echo "CUDA Installation Error."
-    exit 1
-fi
+#if [[ $? -ne 0 ]]; then
+#    echo "CUDA Installation Error."
+#    exit 1
+#fi
 ## -----------------
 ## Set environment vars / vars to be propagated
 ## -----------------
