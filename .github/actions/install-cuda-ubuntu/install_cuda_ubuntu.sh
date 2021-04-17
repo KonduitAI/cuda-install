@@ -99,7 +99,7 @@ do :
         package="nvcc"
     fi
     # Build the full package name and append to the string.
-    CUDA_PACKAGES+=" cuda-${package}-${CUDA_MAJOR}-${CUDA_MINOR}"
+    CUDA_PACKAGES+=" cuda-${package}-${CUDA_MAJOR}-${CUDA_MINOR}  cuda-cudart-${CUDA_MAJOR}-${CUDA_MINOR}"
 done
 echo "CUDA_PACKAGES ${CUDA_PACKAGES} cuda-cudart-${CUDA_MAJOR}-${CUDA_MINOR}"
 
