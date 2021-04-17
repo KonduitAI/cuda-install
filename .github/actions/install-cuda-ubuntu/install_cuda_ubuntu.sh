@@ -130,7 +130,7 @@ sudo apt autoremove && sudo apt autoclean
 
 
 echo "Installing CUDA packages ${CUDA_PACKAGES}"
-sudo apt-get -y install ${CUDA_PACKAGES}
+sudo apt-get -y -f install ${CUDA_PACKAGES}
 
 if [[ $? -ne 0 ]]; then
     echo "CUDA Installation Error."
