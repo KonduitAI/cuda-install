@@ -167,7 +167,11 @@ fi
 
 if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"10.2"* ]]; then
  wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-10.2-linux-x64-v8.2.2.26.tgz
+ 
 fi
 
 sudo tar -hxvf cudnn.tgz -C "$CUDA_PATH"
+if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.6"* ]]; then
+   sudo mv "$CUDA_PATH/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive/*" "$CUDA_PATH"
+fi
 
