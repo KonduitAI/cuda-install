@@ -173,6 +173,7 @@ fi
 sudo tar -hxvf cudnn.tgz -C "$CUDA_PATH"
 if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.6"* ]]; then
    ls "$CUDA_PATH"
+   ls "$CUDA_PATH/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive/"
    sudo cp -rf  "$CUDA_PATH/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive/*" "$CUDA_PATH"
 fi
 
