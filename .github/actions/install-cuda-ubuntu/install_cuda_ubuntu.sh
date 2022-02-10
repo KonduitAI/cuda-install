@@ -160,6 +160,11 @@ if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.4"* ]]; then
  wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-11.4-linux-x64-v8.2.2.26.tgz
 fi
 
+if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"11.6"* ]]; then
+ wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.3.2/local_installers/11.5/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive.tar.xz
+fi
+
+
 if [[ "$CUDA_VERSION_MAJOR_MINOR" == *"10.2"* ]]; then
  wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-10.2-linux-x64-v8.2.2.26.tgz
 fi
