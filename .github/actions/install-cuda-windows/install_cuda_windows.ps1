@@ -167,6 +167,12 @@ Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
 echo "CUDA_PATH=$($CUDA_PATH))" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 echo "CUDA PATH: $CUDA_PATH"
 
+Get-ChildItem $CUDA_PATH -Filter $Files -Recurse | ForEach {
+    $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
+    echo "$Path"
+}
+
+
 # PATH needs updating elsewhere, anything in here won't persist.
 # Append $CUDA_PATH/bin to path.
 # Set CUDA_PATH as an environmental variable
