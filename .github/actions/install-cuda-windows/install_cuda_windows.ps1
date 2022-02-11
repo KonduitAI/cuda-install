@@ -161,6 +161,7 @@ Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
         New-Item -ItemType Directory -Path $Path -Force | Out-Null
     }
     Copy-Item $_.FullName -Destination $Path -Force
+    echo "Extracting cudnn item $Path"
 }
 
 
@@ -169,7 +170,7 @@ echo "CUDA PATH: $CUDA_PATH"
 
 Get-ChildItem $CUDA_PATH -Filter $Files -Recurse | ForEach {
     $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
-    echo "$Path"
+    echo "File in cuda path $Path"
 }
 
 
