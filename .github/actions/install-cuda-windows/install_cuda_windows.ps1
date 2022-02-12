@@ -131,7 +131,8 @@ if(Test-Path -Path $CUDA_REPO_PKG_LOCAL){
 $CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
 Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
 Invoke-WebRequest $($CUDNN_URL) -OutFile "cudnn.zip" | Out-Null
-echo "Wrote file cudnn.zip, listing directory contents at directory $(pwd.path)"
+echo "Wrote file cudnn.zip, listing directory contents at directory"
+echo "$(pwd)"
 Unzip "cudnn.zip" .
 echo "$(Get-ChildItem -Force)"
 
