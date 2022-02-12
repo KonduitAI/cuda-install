@@ -169,12 +169,12 @@ Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
     $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
     If(!(Test-Path $Path)) {
     echo "Creating file $Path"
-      If((Get-Item $Path) -is [System.IO.DirectoryInfo]) {
-           New-Item -ItemType Directory -Path $Path -Force | Out-Null
+      If((Get-Item "$Path") -is [System.IO.DirectoryInfo]) {
+           New-Item -ItemType Directory -Path "$Path" -Force | Out-Null
            echo "Created directory $Path"
-        } elseif(Test-Path -Path $Path  -PathType Leaf) {
-            New-Item -ItemType "file" -Path $Path -Force | Out-Null
-            Copy-Item $_.FullName -Destination $Path -Force
+        } elseif(Test-Path -Path "$Path"  -PathType Leaf) {
+            New-Item -ItemType "file" -Path "$Path" -Force | Out-Null
+            Copy-Item $_.FullName -Destination "$Path" -Force
             echo "Extracting cudnn item $Path"
         }
       
