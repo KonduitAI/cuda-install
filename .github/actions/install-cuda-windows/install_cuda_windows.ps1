@@ -157,16 +157,10 @@ Write-Output "CUDA_PATH_VX_Y $($CUDA_PATH_VX_Y)"
 Get-ChildItem $CUDA_PATH
 
 
-
-
-Unzip "cudnn.zip" $CUDA_PATH
-
-
-
 $Source = 'cudnn'
 if("$CUDA_VERSION_FULL" -eq "11.6.0") {
    echo "Renaming cuda directory to cudnn for cuda 11.6"
-   Rename-Item -Path "$CUDA_PATH\cudnn-windows-x86_64-8.3.2.44_cuda11.5-archive" -NewName "cudnn"
+   Rename-Item -Path "cudnn-windows-x86_64-8.3.2.44_cuda11.5-archive" -NewName "cudnn"
 }
 
 
