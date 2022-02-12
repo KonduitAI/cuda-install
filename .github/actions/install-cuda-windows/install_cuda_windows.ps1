@@ -39,6 +39,16 @@ $CUDA_PACKAGES_IN = @(
 )
 
 
+# See: https://stackoverflow.com/questions/27768303/how-to-unzip-a-file-in-powershell
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+function Unzip
+{
+    param([string]$zipfile, [string]$outpath)
+
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
+
+
 ## -------------------
 ## Select CUDA version
 ## -------------------
@@ -117,6 +127,14 @@ if(Test-Path -Path $CUDA_REPO_PKG_LOCAL){
     exit 1
 }
 
+
+$CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
+Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
+Invoke-WebRequest $($CUDNN_URL) -OutFile "cudnn.zip" | Out-Null
+echo "Wrote file cudnn.zip, listing directory contents at directory $(pwd.path)"
+Unzip "cudnn.zip" .
+echo "$(Get-ChildItem -Force)"
+
 # Invoke silent install of CUDA (via network installer)
 Write-Output "Installing CUDA $($CUDA_VERSION_FULL). Subpackages $($CUDA_PACKAGES) using file $($CUDA_REPO_PKG_LOCAL)"
 Start-Process -Wait -FilePath .\"$($CUDA_REPO_PKG_LOCAL)" -ArgumentList "-s"
@@ -137,17 +155,8 @@ Write-Output "CUDA_PATH $($CUDA_PATH)"
 Write-Output "CUDA_PATH_VX_Y $($CUDA_PATH_VX_Y)"
 Get-ChildItem $CUDA_PATH
 
-$CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
-Write-Output "Downloading CUDNN $($CUDA_VERSION_FULL) from: $($CUDNN_URL)"
-Invoke-WebRequest $($CUDNN_URL) -OutFile "cudnn.zip" | Out-Null
-# See: https://stackoverflow.com/questions/27768303/how-to-unzip-a-file-in-powershell
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-function Unzip
-{
-    param([string]$zipfile, [string]$outpath)
 
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-}
+
 
 Unzip "cudnn.zip" $CUDA_PATH
 
