@@ -169,7 +169,7 @@ Get-ChildItem $Source -Filter $Files -Recurse | ForEach {
     $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
     If(!(Test-Path $Path)) {
     echo "Creating file $Path"
-      If((Get-Item "$Path") -is [System.IO.DirectoryInfo]) {
+      If(Test-Path -Path "$Path" -PathType Container) {
            New-Item -ItemType Directory -Path "$Path" -Force | Out-Null
            echo "Created directory $Path"
         } elseif(Test-Path -Path "$Path"  -PathType Leaf) {
