@@ -160,9 +160,9 @@ Get-ChildItem $CUDA_PATH
 $Source = 'cudnn'
 if("$CUDA_VERSION_FULL" -eq "11.6.0") {
    echo "Renaming cuda directory to cudnn for cuda 11.6"
-   Copy-Item -Path "cudnn-windows-x86_64-8.3.2.44_cuda11.5-archive\*" -Destination $CUDA_PATH -Recurse
+   Copy-Item -Path "cudnn-windows-x86_64-8.3.2.44_cuda11.5-archive\*" -Destination $CUDA_PATH -Recurse -Force
 } else {
-   Copy-Item -Path "cudnn\*" -Destination $CUDA_PATH -Recurse
+   Copy-Item -Path "cudnn\*" -Destination $CUDA_PATH -Recurse -Force
 }
 
 
