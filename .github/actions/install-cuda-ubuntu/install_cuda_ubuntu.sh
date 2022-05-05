@@ -106,7 +106,8 @@ echo "CUDA_PACKAGES ${CUDA_PACKAGES} cuda-cudart-${CUDA_MAJOR}-${CUDA_MINOR}"
 ## -----------------
 ## Prepare to install
 ## -----------------
-
+# add public key for ubuntu 20.04 and above
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
 PIN_FILENAME="cuda-ubuntu${UBUNTU_VERSION}.pin"
 PIN_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION}/x86_64/${PIN_FILENAME}"
 APT_KEY_URL="http://developer.download.nvidia.com/compute/cuda/repos/ubuntu${UBUNTU_VERSION}/x86_64/7fa2af80.pub"
