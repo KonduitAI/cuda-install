@@ -154,7 +154,7 @@ if("$CUDA_VERSION_FULL" -eq "11.6.0") {
 
 
 
-echo "CUDA_PATH=$($CUDA_PATH))" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+echo "CUDA_PATH=$($CUDA_PATH)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 # PATH needs updating elsewhere, anything in here won't persist.
 # Append $CUDA_PATH/bin to path.
 # Set CUDA_PATH as an environmental variable
