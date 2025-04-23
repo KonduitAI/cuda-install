@@ -4,8 +4,8 @@
 
 # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 $CUDA_KNOWN_URLS = @{
-      "12.3" = "https://developer.download.nvidia.com/compute/cuda/12.3.2/network_installers/cuda_12.3.2_windows_network.exe";
-      "12.6" = "https://developer.download.nvidia.com/compute/cuda/12.6.3/network_installers/cuda_12.6.3_windows_network.exe";
+      "12.3" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.3.2_windows_network.exe";
+      "12.6" = https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.6.3_windows_network.exe";
 
 }
 
