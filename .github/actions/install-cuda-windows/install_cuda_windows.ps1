@@ -5,7 +5,8 @@
 # Dictionary of known cuda versions and thier download URLS, which do not follow a consistent pattern :(
 $CUDA_KNOWN_URLS = @{
       "12.3" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.3.2_windows_network.exe";
-      "12.6" = https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.6.3_windows_network.exe";
+      # FIX: Added missing opening quote to the URL string below
+      "12.6" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.6.3_windows_network.exe";
 
 }
 
@@ -129,12 +130,12 @@ Start-Process -Wait -FilePath .\"$($CUDA_REPO_PKG_LOCAL)" -ArgumentList "-s"
 # Check the return status of the CUDA installer.
 if (!$?) {
     Write-Output "Error: CUDA installer reported error. $($LASTEXITCODE)"
-    exit 1 
+    exit 1
 }
 
 # Store the CUDA_PATH in the environment for the current session, to be forwarded in the action.
 $CUDA_PATH = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v$($CUDA_MAJOR).$($CUDA_MINOR)"
-$CUDA_PATH_VX_Y = "CUDA_PATH_V$($CUDA_MAJOR)_$($CUDA_MINOR)" 
+$CUDA_PATH_VX_Y = "CUDA_PATH_V$($CUDA_MAJOR)_$($CUDA_MINOR)"
 # Set environmental variables in this session
 $env:CUDA_PATH = "$($CUDA_PATH)"
 $env:CUDA_PATH_VX_Y = "$($CUDA_PATH_VX_Y)"
@@ -148,11 +149,19 @@ if("$CUDA_VERSION_FULL" -eq "11.6.0") {
    echo "Renaming cuda directory to cudnn for cuda 11.6"
    Copy-Item -Path "cudnn-windows-x86_64-8.3.2.44_cuda11.5-archive\*" -Destination $CUDA_PATH -Recurse -Force  -ErrorAction SilentlyContinue
 } else {
-   Copy-Item -Path "cuda\*" -Destination $CUDA_PATH -Recurse -Force 
+   # Assuming the unzipped cuDNN directory is named 'cudnn-windows...' or similar.
+   # Find the actual directory name after unzipping instead of hardcoding 'cuda'
+   $cudnnUnzipDir = Get-ChildItem -Directory -Filter "cudnn-*-archive" | Select-Object -First 1
+   if ($cudnnUnzipDir) {
+       Write-Output "Copying cuDNN files from $($cudnnUnzipDir.FullName) to $($CUDA_PATH)"
+       Copy-Item -Path (Join-Path $cudnnUnzipDir.FullName "*") -Destination $CUDA_PATH -Recurse -Force
+   } else {
+       Write-Error "Could not find the unzipped cuDNN directory."
+       # Attempting with the original 'cuda\*' pattern as a fallback, though it's likely incorrect based on CUDNN URLs
+       Write-Warning "Falling back to copying from '.\cuda\*' - this might fail."
+       Copy-Item -Path "cuda\*" -Destination $CUDA_PATH -Recurse -Force
+   }
 }
-
-
-
 
 echo "CUDA_PATH=$($CUDA_PATH)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 # PATH needs updating elsewhere, anything in here won't persist.
