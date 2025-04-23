@@ -156,13 +156,6 @@ if("$CUDA_VERSION_FULL" -eq "11.6.0") {
 
 echo "CUDA_PATH=$($CUDA_PATH))" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 echo "CUDA PATH: $CUDA_PATH"
-
-Get-ChildItem $CUDA_PATH -Filter $Files -Recurse | ForEach {
-    $Path = ($_.DirectoryName + "\") -Replace [Regex]::Escape($Source), $CUDA_PATH
-    echo "File in cuda path $Path"
-}
-
-
 # PATH needs updating elsewhere, anything in here won't persist.
 # Append $CUDA_PATH/bin to path.
 # Set CUDA_PATH as an environmental variable
