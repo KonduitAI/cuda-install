@@ -48,16 +48,7 @@ function Unzip
 ## Select CUDA version
 ## -------------------
 
-# Get the cuda version from the environment as env:cuda.
-$CUDA_VERSION_FULL = $env:cuda
-# Make sure CUDA_VERSION_FULL is set and valid, otherwise error.
 
-# Validate CUDA version, extracting components via regex
-$cuda_ver_matched = $CUDA_VERSION_FULL -match "^(?<major>[1-9][0-9]*)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$"
-if(-not $cuda_ver_matched){
-    Write-Output "Invalid CUDA version specified, <major>.<minor>.<patch> required. '$CUDA_VERSION_FULL'."
-    exit 1
-}
 $CUDA_MAJOR=$Matches.major
 $CUDA_MINOR=$Matches.minor
 $CUDA_PATCH=$Matches.patch
