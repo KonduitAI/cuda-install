@@ -26,8 +26,8 @@ $CUDA_FILE_NAMES = @{
 
 # Dictionary of known cuDNN versions corresponding to CUDA versions and their download URLs
 $CUDNN_KNOWN_URLS = @{
-      "12.3" = "https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.7/local_installers/12.x/cudnn-windows-x86_64-8.9.7.29_cuda12-archive.zip";
-      "12.6" = "https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/windows-x86_64/cudnn-windows-x86_64-9.5.0.50_cuda12-archive.zip";
+      "12.3" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cudnn-windows-x86_64-8.9.3.28_cuda12-archive.zip";
+      "12.6" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cudnn-windows-x86_64-9.5.0.50_cuda12-archive.zip";
       # Add more versions and URLs as needed
 }
 
