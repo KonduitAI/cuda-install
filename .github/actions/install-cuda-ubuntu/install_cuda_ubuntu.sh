@@ -88,7 +88,7 @@ fi
 ## -------------------------------
 ## Select CUDA packages to install
 ## -------------------------------
-CUDA_PACKAGES="cuda"
+CUDA_PACKAGES="cuda-toolkit"
 for package in "${CUDA_PACKAGES_IN[@]}"
 do : 
     # @todo This is not perfect. Should probably provide a separate list for diff versions
