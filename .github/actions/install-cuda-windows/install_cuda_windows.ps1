@@ -37,7 +37,9 @@ $CUDA_PACKAGES_IN = @(
     "visual_studio_integration",
     "curand_dev",
     "nvrtc_dev",
-    "cudart" # Generally required for CUDA 11+
+     "cudart",
+    "cublas_dev",      # Add this - provides cuBLAS library
+    "cusolver_dev"     # Add this - provides cuSOLVER library
 )
 
 
