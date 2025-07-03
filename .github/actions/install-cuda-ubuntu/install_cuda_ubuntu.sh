@@ -87,63 +87,117 @@ nvcc -V
 ## -------------------
 
 if [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.6" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/linux-x86_64/cudnn-linux-x86_64-9.5.0.50_cuda12-archive.tar.xz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/linux-x86_64/cudnn-linux-x86_64-9.5.0.50_cuda12-archive.tar.xz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.3" ]]; then
-    wget -O cudnn.tgz https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.7/local_installers/12.x/cudnn-linux-x86_64-8.9.7.29_cuda12-archive.tar.xz
+    CUDNN_URL="https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.7/local_installers/12.x/cudnn-linux-x86_64-8.9.7.29_cuda12-archive.tar.xz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.1" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.9.0/local_installers/12.x/cudnn-linux-x86_64-8.9.0.131_cuda12-archive.tar.xz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.9.0/local_installers/12.x/cudnn-linux-x86_64-8.9.0.131_cuda12-archive.tar.xz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.8" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.6.0/local_installers/11.5/cudnn-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.6.0/local_installers/11.5/cudnn-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.6" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.3.2/local_installers/11.5/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive.tar.xz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.3.2/local_installers/11.5/cudnn-linux-x86_64-8.3.2.44_cuda11.5-archive.tar.xz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.4" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-11.4-linux-x64-v8.2.2.26.tgz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-11.4-linux-x64-v8.2.2.26.tgz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.2" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.1.0/cudnn-11.2-linux-x64-v8.1.0.77.tgz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.1.0/cudnn-11.2-linux-x64-v8.1.0.77.tgz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.0" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.4/cudnn-11.0-linux-x64-v8.0.4.30.tgz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.4/cudnn-11.0-linux-x64-v8.0.4.30.tgz"
 elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "10.2" ]]; then
-    wget -O cudnn.tgz https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-10.2-linux-x64-v8.2.2.26.tgz
+    CUDNN_URL="https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.2/cudnn-10.2-linux-x64-v8.2.2.26.tgz"
 else
     echo "Warning: No predefined cuDNN version for CUDA ${CUDA_MAJOR}.${CUDA_MINOR}. Skipping cuDNN installation."
     exit 0
 fi
 
-if [ -f cudnn.tgz ]; then
-    echo "Installing cuDNN for CUDA ${CUDA_MAJOR}.${CUDA_MINOR}"
-    
-    # Handle different archive formats
-    if [[ "$cudnn.tgz" == *".tar.xz" ]]; then
-        mkdir -p cudnn_tmp
-        tar -xf cudnn.tgz -C cudnn_tmp
-        
-        # Find the directory within the extracted archive
-        CUDNN_DIR=$(find cudnn_tmp -type d -name "cudnn-*" -o -name "include" | head -1)
-        if [ -z "$CUDNN_DIR" ]; then
-            CUDNN_DIR="cudnn_tmp"
-        fi
-        
-        # Copy files to CUDA directory
-        sudo cp -rf cudnn_tmp/*/include/* "$CUDA_PATH/include/"
-        sudo cp -rf cudnn_tmp/*/lib/* "$CUDA_PATH/lib64/"
-        sudo cp -rf cudnn_tmp/*/lib64/* "$CUDA_PATH/lib64/" 2>/dev/null || true
-        
-        # Clean up
-        rm -rf cudnn_tmp
+echo "Downloading cuDNN from ${CUDNN_URL}"
+wget -O cudnn_archive.tar.xz "${CUDNN_URL}"
+
+if [ ! -f cudnn_archive.tar.xz ]; then
+    echo "Error: Failed to download cuDNN. Continuing without cuDNN."
+    exit 0
+fi
+
+echo "Installing cuDNN for CUDA ${CUDA_MAJOR}.${CUDA_MINOR}"
+
+# Create temporary directory for extraction
+mkdir -p cudnn_tmp
+cd cudnn_tmp
+
+# Extract the archive
+if [[ "$CUDNN_URL" == *".tar.xz" ]]; then
+    tar -xf ../cudnn_archive.tar.xz
+else
+    tar -xzf ../cudnn_archive.tar.xz
+fi
+
+# Find the extracted directory
+CUDNN_EXTRACTED_DIR=$(find . -maxdepth 1 -type d -name "cudnn-*" | head -1)
+if [ -z "$CUDNN_EXTRACTED_DIR" ]; then
+    # If no cudnn-* directory, look for direct include/lib structure
+    if [ -d "include" ] && [ -d "lib" -o -d "lib64" ]; then
+        CUDNN_EXTRACTED_DIR="."
     else
-        # Standard tar.gz format
-        sudo tar -xzf cudnn.tgz -C "$CUDA_PATH" --strip-components=1
+        echo "Error: Could not find cuDNN directory structure after extraction"
+        cd ..
+        rm -rf cudnn_tmp cudnn_archive.tar.xz
+        exit 0
+    fi
+fi
+
+echo "Found cuDNN directory: $CUDNN_EXTRACTED_DIR"
+
+# Copy include files
+if [ -d "$CUDNN_EXTRACTED_DIR/include" ]; then
+    echo "Copying cuDNN headers to $CUDA_PATH/include/"
+    sudo cp -rf "$CUDNN_EXTRACTED_DIR/include/"* "$CUDA_PATH/include/"
+    echo "cuDNN headers copied successfully"
+else
+    echo "Warning: No include directory found in cuDNN archive"
+fi
+
+# Copy library files (try both lib and lib64)
+LIB_COPIED=false
+if [ -d "$CUDNN_EXTRACTED_DIR/lib64" ]; then
+    echo "Copying cuDNN libraries from lib64 to $CUDA_PATH/lib64/"
+    sudo cp -rf "$CUDNN_EXTRACTED_DIR/lib64/"* "$CUDA_PATH/lib64/"
+    LIB_COPIED=true
+fi
+
+if [ -d "$CUDNN_EXTRACTED_DIR/lib" ]; then
+    echo "Copying cuDNN libraries from lib to $CUDA_PATH/lib64/"
+    sudo cp -rf "$CUDNN_EXTRACTED_DIR/lib/"* "$CUDA_PATH/lib64/"
+    LIB_COPIED=true
+fi
+
+if [ "$LIB_COPIED" = false ]; then
+    echo "Warning: No lib or lib64 directory found in cuDNN archive"
+fi
+
+# Go back and clean up
+cd ..
+rm -rf cudnn_tmp cudnn_archive.tar.xz
+
+# Verify cuDNN installation
+if [ -f "$CUDA_PATH/include/cudnn.h" ]; then
+    echo "✅ cuDNN installed successfully."
+    echo "cuDNN header location: $CUDA_PATH/include/cudnn.h"
+    
+    # Check for library files
+    if ls "$CUDA_PATH/lib64/"*cudnn* 1> /dev/null 2>&1; then
+        echo "✅ cuDNN libraries found in $CUDA_PATH/lib64/"
+        ls -la "$CUDA_PATH/lib64/"*cudnn*
+    else
+        echo "⚠️  Warning: cuDNN libraries not found in $CUDA_PATH/lib64/"
     fi
     
-    # Verify cuDNN installation
-    if [ -f "$CUDA_PATH/include/cudnn.h" ]; then
-        echo "cuDNN installed successfully."
-    else
-        echo "Warning: cuDNN installation may have failed. CUDA will still work for basic compilation."
-    fi
+    # Set environment variables for cuDNN
+    export CUDNN_ROOT_DIR="$CUDA_PATH"
+    echo "export CUDNN_ROOT_DIR=$CUDA_PATH" | sudo tee -a /etc/profile.d/cuda.sh
     
-    # Clean up
-    rm -f cudnn.tgz
+else
+    echo "❌ Error: cuDNN installation failed. cudnn.h not found."
+    echo "Listing contents of $CUDA_PATH/include/ for debugging:"
+    ls -la "$CUDA_PATH/include/" | grep -i cudnn || echo "No cuDNN files found"
 fi
 
 echo "CUDA installation completed successfully."
