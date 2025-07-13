@@ -37,49 +37,25 @@ $CUDA_PACKAGES_IN = @(
     "visual_studio_integration",
     "curand_dev",
     "nvrtc_dev",
-     "cudart",
-    "cublas_dev",      # Add this - provides cuBLAS library
-    "cusolver_dev"     # Add this - provides cuSOLVER library
+    "cudart" # Generally required for CUDA 11+
 )
 
 
 # Helper function to unzip files
-# Fixed Unzip function using PowerShell Expand-Archive
-# Replace the existing Unzip function in the install_cuda_windows.ps1 script
-
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Unzip
 {
     param([string]$zipfile, [string]$outpath)
     Write-Output "Unzipping '$zipfile' to '$outpath'"
-    
-    # Verify zip file exists and has content
-    if (-not (Test-Path $zipfile)) {
-        Write-Error "Zip file '$zipfile' does not exist"
-        throw "Zip file not found"
-    }
-    
-    $fileInfo = Get-Item $zipfile
-    Write-Output "Zip file size: $($fileInfo.Length) bytes"
-    
-    if ($fileInfo.Length -eq 0) {
-        Write-Error "Zip file '$zipfile' is empty (0 bytes)"
-        throw "Empty zip file"
-    }
-    
-    # Ensure output directory exists
-    if (-not (Test-Path $outpath)) {
-        New-Item -ItemType Directory -Path $outpath -Force | Out-Null
-    }
-    
     try {
-        Write-Output "Extracting using PowerShell Expand-Archive..."
-        Expand-Archive -Path $zipfile -DestinationPath $outpath -Force
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
         Write-Output "Unzip successful."
     } catch {
         Write-Error "Failed to unzip '$zipfile': $($_.Exception.Message)"
-        throw
+        throw # Re-throw the exception to stop the script if unzipping fails
     }
 }
+
 
 ## -------------------
 ## Select CUDA version
