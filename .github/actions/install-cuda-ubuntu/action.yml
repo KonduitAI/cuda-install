@@ -16,10 +16,11 @@ runs:
         export CUDA_PATCH=$(echo "${CUDA_VERSION_MAJOR_MINOR}" | cut -d. -f3)
         # Set paths for subsequent steps, using ${CUDA_PATH}
         echo "Adding CUDA to CUDA_PATH, PATH and LD_LIBRARY_PATH"
-        echo "CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}${CUDA_MINOR}" >> $GITHUB_ENV
-        echo "${CUDA_PATH}/bin" >> $GITHUB_PATH
-        echo "LD_LIBRARY_PATH=${CUDA_PATH}/lib:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
-        echo "Added Cuda path ${CUDA_PATH} LD Lib Path ${LD_LIBRARY_PATH}"
+        CUDA_PATH_RESOLVED="/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}"
+        echo "CUDA_PATH=${CUDA_PATH_RESOLVED}" >> $GITHUB_ENV
+        echo "${CUDA_PATH_RESOLVED}/bin" >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=${CUDA_PATH_RESOLVED}/lib64:${LD_LIBRARY_PATH}" >> $GITHUB_ENV
+        echo "Added CUDA path ${CUDA_PATH_RESOLVED} and updated LD_LIBRARY_PATH"
       
 
       shell: bash
@@ -34,4 +35,3 @@ runs:
         echo "CUDAHOSTCXX=/usr/bin/g++-${{ env.GCC }}" >> $GITHUB_ENV
         sudo apt-get clean
         sudo apt-get autoclean
-

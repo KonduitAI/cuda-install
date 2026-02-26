@@ -29,49 +29,66 @@ fi
 ## Download CUDA installer
 ## -------------------
 
-# URL templates for different CUDA versions
-if [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.6" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_560.28.03_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.3" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.3.0/local_installers/cuda_12.3.0_545.23.06_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.1" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.8" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.6" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda_11.6.0_510.39.01_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.4" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.2" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.2.0/local_installers/cuda_11.2.0_460.27.04_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.0" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run"
-elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "10.2" ]]; then
-    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run"
+# Handle CUDA 12.9 via official apt repository (local .run URL is not stable)
+if [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.9" ]]; then
+    echo "Installing CUDA ${CUDA_MAJOR}.${CUDA_MINOR} from NVIDIA apt repository"
+    wget -q -O cuda-keyring.deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+    sudo dpkg -i cuda-keyring.deb
+    sudo apt-get update -y
+    sudo apt-get install -y cuda-toolkit-12-9
+    rm -f cuda-keyring.deb
+    export CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
 else
-    echo "Error: Unsupported CUDA version ${CUDA_MAJOR}.${CUDA_MINOR}. Aborting."
+    # URL templates for different CUDA versions
+    if [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.6" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_560.28.03_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.3" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.3.0/local_installers/cuda_12.3.0_545.23.06_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "12.1" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/12.1.0/local_installers/cuda_12.1.0_530.30.02_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.8" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.6" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda_11.6.0_510.39.01_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.4" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.2" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.2.0/local_installers/cuda_11.2.0_460.27.04_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "11.0" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda_11.0.2_450.51.05_linux.run"
+    elif [[ "${CUDA_MAJOR}.${CUDA_MINOR}" == "10.2" ]]; then
+    CUDA_URL="https://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run"
+    else
+        echo "Error: Unsupported CUDA version ${CUDA_MAJOR}.${CUDA_MINOR}. Aborting."
+        exit 1
+    fi
+
+    echo "Downloading CUDA installer from ${CUDA_URL}"
+    wget -O cuda_installer.run ${CUDA_URL}
+
+    if [ ! -f cuda_installer.run ]; then
+        echo "Error: Failed to download CUDA installer. Aborting."
+        exit 1
+    fi
+
+    chmod +x cuda_installer.run
+
+    ## -------------------
+    ## Install CUDA silently
+    ## -------------------
+
+    # Install CUDA toolkit with only necessary components for NVCC
+    echo "Installing CUDA ${CUDA_MAJOR}.${CUDA_MINOR} silently"
+    sudo ./cuda_installer.run --silent --toolkit --no-opengl-libs --no-drm --no-man-page --override
+
+    export CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
+fi
+
+if [ ! -x "${CUDA_PATH}/bin/nvcc" ]; then
+    echo "Error: nvcc not found at ${CUDA_PATH}/bin/nvcc after CUDA installation."
     exit 1
 fi
 
-echo "Downloading CUDA installer from ${CUDA_URL}"
-wget -O cuda_installer.run ${CUDA_URL}
-
-if [ ! -f cuda_installer.run ]; then
-    echo "Error: Failed to download CUDA installer. Aborting."
-    exit 1
-fi
-
-chmod +x cuda_installer.run
-
-## -------------------
-## Install CUDA silently
-## -------------------
-
-# Install CUDA toolkit with only necessary components for NVCC
-echo "Installing CUDA ${CUDA_MAJOR}.${CUDA_MINOR} silently"
-sudo ./cuda_installer.run --silent --toolkit --no-opengl-libs --no-drm --no-man-page --override
-
-export CUDA_PATH=/usr/local/cuda-${CUDA_MAJOR}.${CUDA_MINOR}
 echo "CUDA_PATH=$CUDA_PATH"
 
 # Set environment variables
