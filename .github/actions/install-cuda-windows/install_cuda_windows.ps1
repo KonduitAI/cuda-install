@@ -38,6 +38,8 @@ $CUDNN_KNOWN_URLS = @{
 $CUDA_PACKAGES_IN = @(
     "nvcc",
     "visual_studio_integration",
+    "cublas_dev",
+    "cusolver_dev",
     "curand_dev",
     "nvrtc_dev",
     "cudart" # Generally required for CUDA 11+
