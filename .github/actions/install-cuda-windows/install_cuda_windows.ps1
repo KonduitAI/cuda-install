@@ -14,6 +14,7 @@ param(
 $CUDA_KNOWN_URLS = @{
       "12.3" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.3.2_windows_network.exe";
       "12.6" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cuda_12.6.3_windows_network.exe";
+      "12.9" = "https://developer.download.nvidia.com/compute/cuda/12.9.0/network_installers/cuda_12.9.0_windows_network.exe";
       # Add more versions and URLs as needed
 }
 
@@ -21,6 +22,7 @@ $CUDA_KNOWN_URLS = @{
 $CUDA_FILE_NAMES = @{
     "12.3" = "cuda_12.3.2_windows_network.exe";
     "12.6" = "cuda_12.6.3_windows_network.exe";
+    "12.9" = "cuda_12.9.0_windows_network.exe";
     # Add more versions and filenames as needed
 }
 
@@ -28,6 +30,7 @@ $CUDA_FILE_NAMES = @{
 $CUDNN_KNOWN_URLS = @{
       "12.3" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cudnn-windows-x86_64-8.9.3.28_cuda12-archive.zip";
       "12.6" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cudnn-windows-x86_64-9.5.0.50_cuda12-archive.zip";
+      "12.9" = "https://github.com/KonduitAI/dl4j-artifacts/releases/download/1.0.0-M3/cudnn-windows-x86_64-9.5.0.50_cuda12-archive.zip";
       # Add more versions and URLs as needed
 }
 
@@ -84,10 +87,10 @@ if (-not $regexMatched) {
 $CUDA_MAJOR=$Matches.major
 $CUDA_MINOR=$Matches.minor
 $CUDA_PATCH=$Matches.patch # This might be empty/null if only major.minor was provided
+$CUDA_VERSION_KEY="$CUDA_MAJOR.$CUDA_MINOR"
 
 Write-Output "Parsed CUDA Version - Major: $CUDA_MAJOR, Minor: $CUDA_MINOR, Patch: $CUDA_PATCH"
-# Use the full input string as the primary key for lookups, assuming it matches hashtable keys.
-Write-Output "Using '$CUDA_VERSION_FULL' as the key for lookups."
+Write-Output "Using '$CUDA_VERSION_FULL' as the primary key for lookups (normalized key: '$CUDA_VERSION_KEY')."
 
 
 ## ------------------------------------------------
@@ -128,15 +131,21 @@ Write-Output "CUDA packages selected for install arguments: '$($CUDA_PACKAGES)'"
 
 # Select the CUDA download link
 $CUDA_REPO_PKG_REMOTE=""
-if($CUDA_KNOWN_URLS.containsKey($CUDA_VERSION_FULL)){
-    $CUDA_REPO_PKG_REMOTE=$CUDA_KNOWN_URLS[$CUDA_VERSION_FULL]
-    Write-Output "Found known CUDA URL: $CUDA_REPO_PKG_REMOTE"
+$cudaLookupKey=$CUDA_VERSION_FULL
+if(-not $CUDA_KNOWN_URLS.ContainsKey($cudaLookupKey) -and $CUDA_KNOWN_URLS.ContainsKey($CUDA_VERSION_KEY)){
+    $cudaLookupKey=$CUDA_VERSION_KEY
+    Write-Output "CUDA URL not found for '$CUDA_VERSION_FULL'. Falling back to normalized key '$cudaLookupKey'."
+}
+
+if($CUDA_KNOWN_URLS.containsKey($cudaLookupKey)){
+    $CUDA_REPO_PKG_REMOTE=$CUDA_KNOWN_URLS[$cudaLookupKey]
+    Write-Output "Found known CUDA URL using key '$cudaLookupKey': $CUDA_REPO_PKG_REMOTE"
 } else {
     # Attempt to guess the URL based on pattern (may be unreliable)
-    Write-Warning "URL for CUDA '$CUDA_VERSION_FULL' not found in known URLs. Attempting to estimate."
+    Write-Warning "URL for CUDA '$CUDA_VERSION_FULL' (or '$CUDA_VERSION_KEY') not found in known URLs. Attempting to estimate."
     if ($CUDA_MAJOR -and $CUDA_MINOR -and $CUDA_PATCH) {
          # Example guess pattern - UPDATE THIS if NVIDIA changes their URL structure
-         $CUDA_REPO_PKG_REMOTE="http://developer.download.nvidia.com/compute/cuda/$($CUDA_MAJOR).$($CUDA_MINOR).$($CUDA_PATCH)/network_installers/cuda_$($CUDA_VERSION_FULL)_win10_network.exe"
+         $CUDA_REPO_PKG_REMOTE="https://developer.download.nvidia.com/compute/cuda/$($CUDA_MAJOR).$($CUDA_MINOR).$($CUDA_PATCH)/network_installers/cuda_$($CUDA_MAJOR).$($CUDA_MINOR).$($CUDA_PATCH)_windows_network.exe"
          Write-Output "Estimated CUDA URL: $CUDA_REPO_PKG_REMOTE"
     } else {
          Write-Error "Cannot estimate CUDA URL because Major/Minor/Patch version components could not be fully determined from '$CUDA_VERSION_FULL'."
@@ -146,9 +155,15 @@ if($CUDA_KNOWN_URLS.containsKey($CUDA_VERSION_FULL)){
 
 # Select the CUDA local filename
 $CUDA_REPO_PKG_LOCAL=""
-if ($CUDA_FILE_NAMES.ContainsKey($CUDA_VERSION_FULL)) {
-    $CUDA_REPO_PKG_LOCAL=$CUDA_FILE_NAMES[$CUDA_VERSION_FULL]
-    Write-Output "Using known CUDA filename: $CUDA_REPO_PKG_LOCAL"
+$cudaFileLookupKey=$CUDA_VERSION_FULL
+if(-not $CUDA_FILE_NAMES.ContainsKey($cudaFileLookupKey) -and $CUDA_FILE_NAMES.ContainsKey($CUDA_VERSION_KEY)){
+    $cudaFileLookupKey=$CUDA_VERSION_KEY
+    Write-Output "CUDA filename not found for '$CUDA_VERSION_FULL'. Falling back to normalized key '$cudaFileLookupKey'."
+}
+
+if ($CUDA_FILE_NAMES.ContainsKey($cudaFileLookupKey)) {
+    $CUDA_REPO_PKG_LOCAL=$CUDA_FILE_NAMES[$cudaFileLookupKey]
+    Write-Output "Using known CUDA filename for key '$cudaFileLookupKey': $CUDA_REPO_PKG_LOCAL"
 } else {
     # Default filename if not found in the known list
     $CUDA_REPO_PKG_LOCAL="cuda_${CUDA_VERSION_FULL}_windows_network.exe" # Example default
@@ -157,11 +172,17 @@ if ($CUDA_FILE_NAMES.ContainsKey($CUDA_VERSION_FULL)) {
 
 # Select the cuDNN download link
 $CUDNN_URL=""
-if ($CUDNN_KNOWN_URLS.ContainsKey($CUDA_VERSION_FULL)) {
-    $CUDNN_URL = $CUDNN_KNOWN_URLS[$CUDA_VERSION_FULL]
-    Write-Output "Found known cuDNN URL: $CUDNN_URL"
+$cudnnLookupKey=$CUDA_VERSION_FULL
+if(-not $CUDNN_KNOWN_URLS.ContainsKey($cudnnLookupKey) -and $CUDNN_KNOWN_URLS.ContainsKey($CUDA_VERSION_KEY)){
+    $cudnnLookupKey=$CUDA_VERSION_KEY
+    Write-Output "cuDNN URL not found for '$CUDA_VERSION_FULL'. Falling back to normalized key '$cudnnLookupKey'."
+}
+
+if ($CUDNN_KNOWN_URLS.ContainsKey($cudnnLookupKey)) {
+    $CUDNN_URL = $CUDNN_KNOWN_URLS[$cudnnLookupKey]
+    Write-Output "Found known cuDNN URL using key '$cudnnLookupKey': $CUDNN_URL"
 } else {
-    Write-Error "cuDNN URL for CUDA version '$CUDA_VERSION_FULL' not found in known URLs. Cannot proceed."
+    Write-Error "cuDNN URL for CUDA version '$CUDA_VERSION_FULL' (or '$CUDA_VERSION_KEY') not found in known URLs. Cannot proceed."
     exit 1
 }
 
